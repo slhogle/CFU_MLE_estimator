@@ -1,51 +1,33 @@
-# hogleLabProjTemplate
+# CFU_MLE_estimator
 
-A simple template for a project using R/Python and [Quarto](https://quarto.org/) notebooks. 
+A simple scripts in Python and R implementing the approach [used here](https://journals.asm.org/doi/10.1128/spectrum.03946-23))
+for estimating CFUs from a dilution series. The authors provide an online calculator [here](https://huggingface.co/spaces/KMichaelMartini/CFUestimator) but 
+I wanted to code the approach myself to make sure I was understanding it correctly. I coded it in R and also Python. The author's original python code is 
+available here: https://github.com/KMichaelMartini/CFUestimators/tree/main
 
-The project is rendered with Quarto and can then be served using GitHub Pages [following these instructions](https://quarto.org/docs/publishing/github-pages.html). 
+## Use
 
-You can view the HTML documents on the web and share them with collaborators. Once rendered and configured with GitHub pages, 
-you would be able to view the website at this URL <https://GHUSERNAME.github.io/REPOSITORYNAME/>
+To use the scripts you should first count bacterial colonies! Ideally you do this at multiple dilutions but one dilution also works. You should also aim to 
+measure the maximum number of technical replicates possible for each dilution. We typically do 3 replicates for a 4 different dilutions in a 96 well format on 
+a Nunc Omnitray ([see protocol here](https://github.com/slhogle/OT2_plate_spotting)). You can also perform two replicates at 6 different dilutions using the same 96-well format.
 
-[Click here to view rendered notebooks of the analysis.](https://slhogle.github.io/hogleLabProjTemplate/)
+You record these colony counts in a file formatted like `/_data_raw/CFU_test.csv`. This file contains 3 columns: 
 
-## Structure:
-The `_data_raw` directory should never be touched or modified! It includes raw data files obtained from instruments.
+1. Column 1 contains the actual observed colony counts
+2. Column 2 contains the dilution at which those colonies were counted
+3. Column 3 contains some kind of grouping variable (e.g., sample identifier)
 
-The `data` directory is where processed data projects should go. Usually, in an analysis workflow you will start with raw data, 
-clean/organize it, perhaps transform it in some way, then save that product in `data` for later branches of the workflow. 
-
-The `R/Py` directories store analysis code/scripts for the project. I prefer to keep a separate directory for each analysis language I am using in the project, but you 
-may, of course, combine all code, regardless of language, into a single directory structure if you prefer.
-
-Note: You can create whatever kind of sub-directory structure you prefer within `_data_raw`, `data`, `R`, and `Py`. You can also create other new directories. 
-Some steps of the process will create new directories for you (e.g., running `renv::init`, or `quarto render`). This is expected. Renv will create its own `.gitignore` to prevent 
-committing huge R environments.
-
-## Manuscript:
-
-◇ Corresponding author
-
-### Published record
-
-**Title XYZ**\
-FIRST AUTHOR<sup>◇</sup>, ..., LAST AUTHOR<sup>◇</sup>. *XYZ* (2025) [doi:]()
-
-### Preprint
-
-**Title XYZ**\
-FIRST AUTHOR<sup>◇</sup>, ..., LAST AUTHOR<sup>◇</sup>. *BioRxiv* (2025) [doi:]()
+There is no need to distinguish replicates just include them in separate rows. When you run the script it will output a CFU/ml estimate based on a truncated Poisson method and a
+most probable number approach. The parameters you need to edit include the volume of sample plated or spotted (this volume needs to be the same for the
+whole dilution series) and different cutoffs. The crowding cutoff `N` for the censored Poisson approach should be a count value less than you suspect crowding
+might start to impact the results (e.g., colonies merging together). For the 2 ul spotting assay a good value for this is 40 to 50. For a standard 100 mm 
+Petri dish a good value is 300. The crowding cutoff `NMLE` sets a crowding threshold for the MPN estimator. A good starting value is the ratio of the total 
+area of the plate/spot to the average colony size. For a 100 mm petri  dish a good value is 5000. For a 2 ul spot, a decent value to try is 100. The volume 
+`V` should be in ml so that the reported CFU density is in units of CFU/ml.
 
 ## Availability
 
-Data and code in this GitHub repository (<https://github.com/GHUSERNAME/REPOSITORYNAME>) are provided under [GNU AGPL3](https://www.gnu.org/licenses/agpl-3.0.html).
-The rendered project site is available at <https://GHUSERNAME.github.io/REPOSITORYNAME/>, which has been produced using [Quarto notebooks](https://quarto.org/). 
-The content on the rendered site is released under the [CC BY 4.0.](https://creativecommons.org/licenses/by/4.0/)
-This repository hosts all code and data for this project, including the code necessary to fully recreate the rendered webpage.
-
-An archived release of the code is available from Zenodo: <https://zenodo.org/records/EVENTUAL_ZENODO_RECORD>
-
-Raw sequencing data used in the project is available from NCBI Bioproject [PRJNA00000000](https://www.ncbi.nlm.nih
+Data and code in this GitHub repository (<https://github.com/slhogle/CFU_MLE_estimator>) are provided under [GNU AGPL3](https://www.gnu.org/licenses/agpl-3.0.html).
 
 ## Reproducibility
 
